@@ -1,0 +1,281 @@
+#!/bin/bash
+teamCode=nocode
+playerCode=nocode
+player1=noplayer
+player2=noplayer
+player3=noplayer
+consent=Y
+firstName=noName
+londonID=noID
+#validates the arguments
+function parameterChecker(){
+    firstName=$1
+    londonID=$2
+    #checks the number of arguments provided
+    if [ $# = 2 ]
+    then
+        #checks whether the 1st argument is valid or not
+        if  ! [[ "$firstName" =~ ^[0-9]+$ ]]
+        then
+            #checks whether the 2nd argument is valid or not
+            if [[ "$londonID" =~ ^[0-9]+$ ]]
+            then
+                #makes a call to the function
+                secretKey
+            else
+                echo "Second argument must be number"
+            fi
+        else 
+            echo "The first argument should not contain symbols and numbers"
+        fi
+    else
+        echo "----------------------------"
+        echo
+        echo "Wrong argument provided"
+        echo 
+        echo "Provide first argument as First Name"
+        echo
+        echo "Provide second argument as LondonID"
+        echo 
+        echo "====================================="
+        exit
+    fi
+}
+#validates secretKey
+function secretKey(){
+  i=0
+  key=6441
+  while [ $i -lt 4 ] 
+  do
+    echo -e "Enter the secretkey: \c"
+    read secretkey
+    if [ $i -le 3 ] 
+    then 
+      #checks whether the secretkey is integers or not
+      if ! [[ "$secretkey" =~ ^[0-9]+$ ]]
+      then
+          echo "--------------------------"
+          echo
+          echo "Sorry integers only"
+          echo 
+          echo "Please enter the key again"
+          echo
+          echo "--------------------------"
+          ((i++))
+      else
+        #checks whether the secretkey is equal to key or not
+        if [ $secretkey -eq $key ]
+        then
+            #makes a call to the function
+            nameAndId
+            break
+        else 
+            echo "--------------------------"
+            sleep 1
+            echo
+            echo "You entered the wrong key"
+            sleep 1
+            echo
+            echo "Please enter the key again"
+            echo 
+            echo "------------------------------"
+            ((i++))
+        fi
+      fi 
+    fi
+    if [ $i -eq 4 ]
+    then 
+      echo "You entered wrong key four times"
+      echo "Please run the program again and provide your secretKey"
+    fi 
+  done
+}
+#displays name,id and date
+function nameAndId(){
+    echo "-----------------------"
+    sleep 1
+    figlet -k Welcome!
+    sleep 1
+    echo "Thank you for choosing us"
+    sleep 1
+    echo "Londonid: $londonID"
+    sleep 1
+    echo "firstName: $firstName"
+    sleep 1
+    echo "$(date '+%D %T' | toilet -f term -F border --gay)"
+    echo "------------------------"
+    sleep 1
+    #makes a call to the function
+    footballTeam
+}
+#validates the favourite team
+function footballTeam(){
+    echo "CountryCode  Country"
+    echo "  BRZ         Brazil"
+    echo "  ARG         Argentina"
+    echo "  NEP         Nepal"
+    echo "  CHN         China"
+    echo "  ENG         England"
+    i=0
+    while true
+    do
+        echo -e "Choose your favourite team using countrycode:\c"
+        read teamCode
+        #checks whether the team code is valid or not
+        case $teamCode in 
+        "NEP")
+            figlet -k NEPAL
+            sleep 1
+            echo "Favourite team in the world"
+            sleep 1
+            echo "Has one of the unique flag in the world"
+            sleep 1
+            #makes a call to the function
+            choosePlayer
+        break
+        ;;
+        *)
+            echo "you chose the wrong team"
+            echo "Choose again"
+        ;;
+        esac  
+    done 
+}
+#validates the player choosing
+function choosePlayer(){
+    while true 
+    do
+        echo "---------------------------"
+        echo "PlayerCode  Player"
+        echo "  LM        Lionel Messi"
+        echo "  KC        Kiran Chemjong"
+        echo "  NJ        Neymar Junior"
+        echo "  Hk        Harry kane"
+        echo "  ZZ        Zheng Zhi"
+        echo "----------------------------"
+        echo "Choose the players from above using the code"
+        sleep 0.5
+        echo "Type three player codes from above providing spaces"
+        #sleep 1
+        echo "For example choose players: player1 player2 player3"
+        echo "---------------------------------------------------"
+        #sleep 1
+        echo -e "Choose players:\c"
+        #sleep 1
+        read player1 player2 player3
+        #checks the valid input in player1
+        case $player1 in 
+        "LM"|"NJ"|"KC"|"ZZ"|"HK")
+            #checks the valid input in player2
+            case $player2 in 
+            "LM"|"NJ"|"KC"|"ZZ"|"HK")
+                #checks the valid input in player3
+                case $player3 in 
+                "LM"|"NJ"|"KC"|"ZZ"|"HK") 
+                     #checks whether same player code is provided three times or not
+                    if [ $player1 = $player2 ] && [ $player1 = $player2 ]
+                    then
+                        echo "You chose all three player code as same"
+                    #checks whether same payer code is provided two times or not
+                    elif  [ $player1 = $player2 ] || [ $player2 = $player3 ] || [ $player3 = $player1 ]
+                    then 
+                       echo "You chose all two same player code" 
+                    else   
+                        #makes a call to the function
+                        selectPlayer
+                    fi
+                ;;
+                *)
+                echo "You entered the wrong player code"
+                echo "Choose Again"
+                esac
+            ;;
+            *)
+            echo "You entered the wrong player code"
+            echo "Choose Again"
+            esac
+        ;;
+        *)
+        echo "You entered the wrong player code"
+        echo "Choose Again"
+        esac  
+    done
+}
+#vaidates the menu to select player
+function selectPlayer(){
+    PS3="Choose the player from above: "
+    select player in $player1 $player2 $player3
+    do
+        #checks whether file is present or not
+        if [ -f $player ]
+        then
+            #checks whether the user selects from the menu or not
+            if [[ -z $player ]]
+            then 
+                echo "Choose the player again"
+            #checks the selected menu and displays the player profile
+            elif [ $player = "KC" ]
+            then 
+                figlet -k KIRAN CHEMJONG
+                cat $player
+                #makes a call to the function
+                continue
+                break
+            #checks the selected menu and displays the player profile
+            elif [ $player = "LM" ]
+            then 
+                figlet -k MESSI
+                cat $player
+                #makes a call to the function
+                continue
+                break
+            #checks the selected menu and displays the player profile
+            elif [ $player = "NJ" ]
+            then 
+                figlet -k NEYMAR
+                cat $player
+                #makes a call to the function
+                continue
+                break
+            fi
+        else 
+            echo "The file doesn't exist"
+            echo "Choose the team and player again"
+            footballTeam
+           break
+        fi
+    done
+}
+# asks uers if they want to continue or not
+function continue(){
+    #runs until the user select N
+    until [ $consent = "N" ] || [ $consent = "n" ]
+        do
+            echo -e "Do you want to continue Y/N:\c"
+            read consent
+            #checks the provided input 
+            case $consent in 
+            "Y"|"y")
+            #makes a call to the function
+            footballTeam
+            break
+            ;;
+            "N"|"n")
+            echo "Thank you"
+            exit
+            break
+            ;;
+            *)
+            echo "Please choose Y or N"
+            echo "Enter again"
+            esac
+        done
+}
+#checks the number of arguments
+if [ $# -gt 2 ]
+then 
+  echo "You have entered more than two arguments"
+else 
+    #makes a call to the function
+    parameterChecker $1 $2
+fi
